@@ -52,20 +52,42 @@ Starting state was identical (tagged commit `v1-automation`). Target was identic
 
 ## Results
 
-| Metric | Baseline | Graphify | Reduction |
-|--------|:--------:|:-------:|:--------:|
+### Two-Way: Grep vs Graphify
+
+| Metric | Grep (Baseline) | Graphify | Reduction |
+|--------|:--------------:|:-------:|:--------:|
 | Grep searches | 5 | 0 | 100% |
 | Files opened for analysis | 9 | 0 | 100% |
-| **Total files opened** | **18** | **5** | **72.2%** |
-| **LOC inspected** | **3,849** | **~600** | **84.4%** |
-| **Estimated tokens** | **~8,500** | **~2,800** | **67.1%** |
-| **Time elapsed** | **77 min** | **28 min** | **63.6%** |
+| **Total files opened** | **18** | **5** | **72%** |
+| **LOC inspected** | **4,102** | **1,529** | **63%** |
+| **Tokens (discovery)** | **~39,900** | **~16,600** | **58%** |
+| **Time elapsed** | **77 min** | **28 min** | **64%** |
 | **Rework cycles** | **2** | **0** | **100%** |
 | Files modified | 9 | 9 | 0% |
 | Lines changed | ~879 | ~879 | 0% |
 | Migration accuracy | 8/8 | 8/8 | 0% |
 
-**The code changes were identical. Only the path to arriving at them differed.**
+### Three-Way: Grep vs Vector Search (Cursor-style) vs Graphify
+
+A second experiment simulated how a vector embedding-based IDE (Cursor) would perform the same discovery, using `all-MiniLM-L6-v2` with top-10 chunk retrieval across 7 queries — the same approach Cursor uses internally.
+
+| Metric | Grep | Vector Search | Graphify |
+|--------|:----:|:------------:|:--------:|
+| Files retrieved | 18 | 24 | **5** |
+| LOC loaded | 4,102 | 3,113 | **1,529** |
+| **Tokens (discovery)** | **~39,900** | **~29,100** | **~16,600** |
+| Missed needed files | 0\* | **4** | **0** |
+| Rework cycles | 2 | unknown† | **0** |
+
+\*Grep caught all files but required 2 rework cycles due to missed call chains.  
+†Vector search missed 4 of 9 needed files outright — any migration using it would be incomplete without a second pass.
+
+**Token reductions (all measured with consistent chars/4 method):**
+- Grep → Graphify: **58% reduction**
+- Vector → Graphify: **43% reduction**
+- Vector vs Grep: Vector loads **27% fewer tokens** than grep — but misses 4 files
+
+**The code changes were identical across all three approaches. Only the discovery path differed.**
 
 ---
 
@@ -221,14 +243,19 @@ GraphifyPOC/
 ├── automation-graphify/        # Framework migrated to v2 WITH Graphify
 │   └── src/ + tests/           # Same 9 files changed, 0 rework cycles
 │
+├── vector-sim/                 # Vector search simulation (Cursor-style retrieval)
+│   ├── simulate.js             # Embeds automation-v1 files, runs 7 queries, records results
+│   └── package.json
+│
 └── reports/
-    ├── baseline-results.md     # Phase 4: full discovery log, metrics, time breakdown
-    ├── graphify-analysis.md    # Phase 5: graph stats, god nodes, communities, impact analysis
-    ├── graphify-results.md     # Phase 6: graphify migration log and metrics
-    ├── comparison.md           # Side-by-side metrics + ASCII charts + key findings
-    ├── root-cause-analysis.md  # Why graphify helps: cascade problem mechanics
-    ├── final-research-study.md # 15-section executive research report
-    └── linkedin-article.md     # Professional engineering article
+    ├── baseline-results.md         # Phase 4: full discovery log, metrics, time breakdown
+    ├── graphify-analysis.md        # Phase 5: graph stats, god nodes, communities, impact analysis
+    ├── graphify-results.md         # Phase 6: graphify migration log and metrics
+    ├── comparison.md               # Two-way metrics + ASCII charts + key findings
+    ├── vector-search-results.md    # Three-way comparison including vector simulation
+    ├── root-cause-analysis.md      # Why graphify helps: cascade problem mechanics
+    ├── final-research-study.md     # 15-section executive research report
+    └── linkedin-article.md         # Professional engineering write-up
 ```
 
 ---
@@ -332,7 +359,8 @@ At the scale of this experiment (5,000 LOC app, 70 tests), the absolute numbers 
 
 | Report | Purpose |
 |--------|---------|
-| [`reports/comparison.md`](reports/comparison.md) | Primary metrics comparison with ASCII charts |
+| [`reports/comparison.md`](reports/comparison.md) | Primary two-way metrics comparison with ASCII charts |
+| [`reports/vector-search-results.md`](reports/vector-search-results.md) | Three-way comparison including vector search simulation |
 | [`reports/final-research-study.md`](reports/final-research-study.md) | Full 15-section research study |
 | [`reports/graphify-analysis.md`](reports/graphify-analysis.md) | Knowledge graph deep-dive: nodes, communities, centrality |
 | [`reports/baseline-results.md`](reports/baseline-results.md) | Baseline migration log with discovery narrative |
