@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(where git *)",
+      "Bash(git --version)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\VijayMandavilli\\\\Desktop\\\\GraphifyPOC\\\\app-v1\\\\frontend\\\\src\\\\types\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\VijayMandavilli\\\\Desktop\\\\GraphifyPOC\\\\app-v1\\\\frontend\\\\src\\\\contexts\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\VijayMandavilli\\\\Desktop\\\\GraphifyPOC\\\\app-v1\\\\frontend\\\\src\\\\services\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\VijayMandavilli\\\\Desktop\\\\GraphifyPOC\\\\app-v1\\\\frontend\\\\src\\\\pages\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\VijayMandavilli\\\\Desktop\\\\GraphifyPOC\\\\app-v1\\\\frontend\\\\src\\\\components\")",
+      "Bash(Write-Host \"Directories created\")",
+      "PowerShell(New-Item *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const Database = require\\('better-sqlite3'\\); const db = new Database\\(':memory:'\\); console.log\\('better-sqlite3 works:', db.prepare\\('SELECT 1 AS n'\\).get\\(\\)\\);\")",
+      "Bash(node -e \"const v = require\\('./node_modules/better-sqlite3/package.json'\\).version; console.log\\('better-sqlite3 version:', v\\);\")",
+      "Bash(where tar *)",
+      "Bash(node -e ' *)",
+      "Bash(node src/database/seed.js)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Phase 1: Add ShopHub e-commerce application v1 *)"
+    ]
+  }
+}
